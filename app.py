@@ -207,6 +207,12 @@ if quantity_col and reorder_col:
         errors="coerce"
     ).fillna(0)
 
+    quantity = pd.to_numeric(quantity, errors="coerce").fillna(0)
+reorder = pd.to_numeric(reorder, errors="coerce").fillna(0)
+
+low_stock_mask = quantity <= reorder
+low_stock_count = int(low_stock_mask.sum())
+
     low_stock_mask = quantity <= reorder
     low_stock_count = int(low_stock_mask.sum())
 else:
