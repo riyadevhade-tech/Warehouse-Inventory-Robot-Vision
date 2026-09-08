@@ -9,25 +9,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-    import sys
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent
-
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
 from robot_vision import RobotVisionSystem
 from robot_vision import save_detection
 from robot_vision import get_detection_history
-
-from robot_vision import RobotVisionSystem
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-import sys
-from pathlib import Path
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 if str(PROJECT_ROOT) not in sys.path:
