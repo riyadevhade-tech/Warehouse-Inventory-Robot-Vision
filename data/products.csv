@@ -1,1 +1,11 @@
-
+Product_ID,Product_Name,Category,Quantity,Price,Reorder_Level,Warehouse_Section
+P001,Mouse,Accessories,25,500,10,A1
+P002,Keyboard,Accessories,18,800,10,A1
+P003,Monitor,Electronics,8,12000,5,A2
+P004,Laptop,Electronics,5,50000,3,A2
+P005,USB Cable,Accessories,40,250,15,A1
+P006,Webcam,Electronics,7,2500,5,A2
+P007,Headphones,Accessories,12,1500,5,A1
+P008,Printer,Electronics,4,15000,3,A3
+P009,SSD,Storage,6,6000,3,A2
+P010,Power Bank,Accessories,20,1200,8,A1
