@@ -436,10 +436,40 @@ elif menu == "⚠️ Low Stock":
 
         low_stock_df = df[low_stock_mask].copy()
 
-        if low_stock_df.empty:
-            st.success(
-                "✅ No low-stock products found."
-            )
+
+    if low_stock_df.empty:
+
+    st.info(
+        "ℹ️ Currently no actual low-stock products found."
+    )
+
+    st.subheader("⚠️ Low Stock Demo")
+
+    demo_low_stock = df.head(3).copy()
+
+    demo_low_stock["Stock Status"] = "LOW STOCK"
+
+    st.warning(
+        "⚠️ Demo: Products requiring attention"
+    )
+
+    st.dataframe(
+        demo_low_stock,
+        use_container_width=True,
+        hide_index=True
+    )
+
+else:
+    st.warning(
+        f"⚠️ {len(low_stock_df)} "
+        "products require attention."
+    )
+
+    st.dataframe(
+        low_stock_df,
+        use_container_width=True,
+        hide_index=True
+    )
         else:
             st.warning(
                 f"⚠️ {len(low_stock_df)} "
