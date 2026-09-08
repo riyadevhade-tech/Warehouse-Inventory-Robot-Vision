@@ -3,3 +3,4 @@ pandas
 plotly
 opencv-python-headless
 numpy
+reportlab
