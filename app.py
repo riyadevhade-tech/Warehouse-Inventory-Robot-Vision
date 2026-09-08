@@ -929,7 +929,7 @@ if menu == "🕒 Vision History":
             st.info(
                 "📷 No vision scans recorded yet."
             )
-        # =========================================================
+# =========================================================
 # REPORTS
 # =========================================================
 
@@ -961,37 +961,148 @@ if menu == "📋 Reports":
 
         st.markdown("---")
 
-        with open(report_file, "rb") as file:
+        # =====================================================
+        # CSV DOWNLOAD
+        # =====================================================
 
-            st.download_button(
-                label="📥 Download CSV Report",
-                data=file,
-                file_name="warehouse_inventory_report.csv",
-                mime="text/csv"
-            )
+        csv_data = report_df.to_csv(
+            index=False
+        ).encode("utf-8")
 
-        # PDF REPORT
-        pdf_file = Path(
-            "reports/warehouse_inventory_report.pdf"
+        st.download_button(
+            label="📥 Download CSV Report",
+            data=csv_data,
+            file_name="warehouse_inventory_report.csv",
+            mime="text/csv"
         )
 
-        if pdf_file.exists():
+        # =====================================================
+        # PDF GENERATION
+        # =====================================================
 
-            with open(pdf_file, "rb") as file:
+        pdf_buffer = BytesIO()
 
-                st.download_button(
-                    label="📄 Download PDF Report",
-                    data=file,
-                    file_name="warehouse_inventory_report.pdf",
-                    mime="application/pdf"
-                )
+        document = SimpleDocTemplate(
+            pdf_buffer,
+            pagesize=A4,
+            rightMargin=25,
+            leftMargin=25,
+            topMargin=30,
+            bottomMargin=30
+        )
 
-        else:
+        pdf_data = []
 
-            st.warning(
-                "⚠️ PDF report not found. "
-                "Run reports/report.py first."
+        # PDF Title
+        pdf_data.append(
+            Paragraph(
+                "<b>SMART WAREHOUSE MANAGEMENT</b>",
+                getSampleStyleSheet()["Title"]
             )
+        )
+
+        pdf_data.append(
+            Paragraph(
+                "Warehouse Inventory Report",
+                getSampleStyleSheet()["Heading2"]
+            )
+        )
+
+        pdf_data.append(Spacer(1, 15))
+
+        # Convert DataFrame to PDF table
+        table_data = [
+            list(report_df.columns)
+        ]
+
+        table_data.extend(
+            report_df.astype(str).values.tolist()
+        )
+
+        report_table = Table(
+            table_data,
+            repeatRows=1
+        )
+
+        report_table.setStyle(
+            TableStyle([
+                (
+                    "BACKGROUND",
+                    (0, 0),
+                    (-1, 0),
+                    colors.grey
+                ),
+                (
+                    "TEXTCOLOR",
+                    (0, 0),
+                    (-1, 0),
+                    colors.white
+                ),
+                (
+                    "FONTNAME",
+                    (0, 0),
+                    (-1, 0),
+                    "Helvetica-Bold"
+                ),
+                (
+                    "FONTSIZE",
+                    (0, 0),
+                    (-1, -1),
+                    7
+                ),
+                (
+                    "GRID",
+                    (0, 0),
+                    (-1, -1),
+                    0.5,
+                    colors.black
+                ),
+                (
+                    "ALIGN",
+                    (0, 0),
+                    (-1, -1),
+                    "CENTER"
+                ),
+                (
+                    "VALIGN",
+                    (0, 0),
+                    (-1, -1),
+                    "MIDDLE"
+                ),
+                (
+                    "TOPPADDING",
+                    (0, 0),
+                    (-1, -1),
+                    5
+                ),
+                (
+                    "BOTTOMPADDING",
+                    (0, 0),
+                    (-1, -1),
+                    5
+                )
+            ])
+        )
+
+        pdf_data.append(report_table)
+
+        document.build(pdf_data)
+
+        pdf_buffer.seek(0)
+
+        st.markdown("---")
+
+        st.download_button(
+            label="📄 Download PDF Report",
+            data=pdf_buffer.getvalue(),
+            file_name="warehouse_inventory_report.pdf",
+            mime="application/pdf"
+        )
+
+        st.success(
+            "✅ PDF report is ready to download."
+        )
+
     else:
 
         st.warning(
