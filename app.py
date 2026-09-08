@@ -90,7 +90,7 @@ st.markdown("""
 # =========================================================
 # LOAD DATA
 # =========================================================
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE = BASE_DIR / "data" / "products.csv"
 
 try:
