@@ -187,7 +187,10 @@ if quantity_col:
         errors="coerce"
     ).fillna(0)
 else:
-    quantity = pd.Series([0] * len(df))
+    quantity = pd.Series(
+        [0] * len(df),
+        index=df.index
+    )
 
 total_stock = quantity.sum()
 
@@ -201,26 +204,39 @@ if quantity_col and price_col:
 else:
     inventory_value = 0
 
+# =========================================================
+# LOW STOCK CALCULATION
+# =========================================================
 if quantity_col and reorder_col:
+
     reorder = pd.to_numeric(
         df[reorder_col],
         errors="coerce"
     ).fillna(0)
 
-    quantity = pd.to_numeric(quantity, errors="coerce").fillna(0)
-reorder = pd.to_numeric(reorder, errors="coerce").fillna(0)
+    quantity = pd.to_numeric(
+        quantity,
+        errors="coerce"
+    ).fillna(0)
 
-low_stock_mask = quantity <= reorder
-low_stock_count = int(low_stock_mask.sum())
+    reorder = pd.to_numeric(
+        reorder,
+        errors="coerce"
+    ).fillna(0)
 
     low_stock_mask = quantity <= reorder
-    low_stock_count = int(low_stock_mask.sum())
-else:
-    low_stock_mask = pd.Series(
-        [False] * len(df)
+    low_stock_count = int(
+        low_stock_mask.sum()
     )
-    low_stock_count = 0
 
+else:
+
+    low_stock_mask = pd.Series(
+        [False] * len(df),
+        index=df.index
+    )
+
+    low_stock_count = 0
 # =========================================================
 # DASHBOARD
 # =========================================================
