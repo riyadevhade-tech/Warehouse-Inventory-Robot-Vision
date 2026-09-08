@@ -1,0 +1,11 @@
+Product_ID,Product_Name,Category,Quantity,Price,Reorder_Level,Warehouse_Section,Inventory_Value,Stock_Status
+P001,Mouse,Accessories,25,500,10,A1,12500,AVAILABLE
+P002,Keyboard,Accessories,18,800,10,A1,14400,AVAILABLE
+P003,Monitor,Electronics,8,12000,5,A2,96000,AVAILABLE
+P004,Laptop,Electronics,5,50000,3,A2,250000,AVAILABLE
+P005,USB Cable,Accessories,40,250,15,A1,10000,AVAILABLE
+P006,Webcam,Electronics,7,2500,5,A2,17500,AVAILABLE
+P007,Headphones,Accessories,12,1500,5,A1,18000,AVAILABLE
+P008,Printer,Electronics,4,15000,3,A3,60000,AVAILABLE
+P009,SSD,Storage,6,6000,3,A2,36000,AVAILABLE
+P010,Power Bank,Accessories,20,1200,8,A1,24000,AVAILABLE
