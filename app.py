@@ -5,7 +5,6 @@ from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 import streamlit as st
 from PIL import Image
-from pyzbar.pyzbar import decode
 import pandas as pd
 import plotly.express as px
 import sys
