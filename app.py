@@ -100,6 +100,21 @@ st.markdown("""
 BASE_DIR = Path(__file__).resolve().parent
 DATA_FILE = BASE_DIR / "data" / "products.csv"
 
+# =========================================================
+# YOLO AI MODEL
+# =========================================================
+
+YOLO_MODEL = "yolo11n.pt"
+
+try:
+    yolo_model = YOLO(YOLO_MODEL)
+    YOLO_AVAILABLE = True
+
+except Exception as e:
+    yolo_model = None
+    YOLO_AVAILABLE = False
+    YOLO_ERROR = str(e)
+
 try:
     df = pd.read_csv(DATA_FILE)
 except Exception:
