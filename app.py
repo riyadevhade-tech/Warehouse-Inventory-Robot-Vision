@@ -242,6 +242,22 @@ else:
     )
 
     low_stock_count = 0
+
+# =========================================================
+# AUTOMATIC LOW STOCK ALERT
+# =========================================================
+
+if low_stock_count > 0:
+
+    st.sidebar.warning(
+        f"⚠️ Low Stock Alert: {low_stock_count} product(s) need attention!"
+    )
+
+else:
+
+    st.sidebar.success(
+        "✅ Stock Status: All products are above reorder level."
+    )
 # =========================================================
 # DASHBOARD
 # =========================================================
