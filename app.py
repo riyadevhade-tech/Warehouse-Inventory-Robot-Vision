@@ -9,6 +9,7 @@ import pandas as pd
 import plotly.express as px
 import sys
 from pathlib import Path
+from ultralytics import YOLO
  
 PROJECT_ROOT = Path(__file__).resolve().parent
 
