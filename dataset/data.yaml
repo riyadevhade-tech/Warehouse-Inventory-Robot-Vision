@@ -3,7 +3,7 @@ path: dataset
 train: images/train
 val: images/val
 
-names:
+names: 
   0: Mouse
   1: Keyboard
   2: Monitor
