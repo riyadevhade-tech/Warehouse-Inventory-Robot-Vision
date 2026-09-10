@@ -4,4 +4,3 @@ plotly
 opencv-python-headless
 numpy
 reportlab
-pyzbar
