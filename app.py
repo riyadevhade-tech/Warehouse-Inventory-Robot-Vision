@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.express as px
 import sys
 from pathlib import Path
-
+ 
 PROJECT_ROOT = Path(__file__).resolve().parent
 
 if str(PROJECT_ROOT) not in sys.path:
