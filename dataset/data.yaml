@@ -1,1 +1,13 @@
+path: dataset
 
+train: images/train
+val: images/val
+
+names:
+  0: Mouse
+  1: Keyboard
+  2: Monitor
+  3: Laptop
+  4: SSD
+  5: Webcam
+  6: Printer
