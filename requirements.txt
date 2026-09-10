@@ -4,3 +4,4 @@ plotly
 opencv-python-headless
 numpy
 reportlab
+ultralytics
