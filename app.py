@@ -525,6 +525,81 @@ elif menu == "🤖 Robot Vision":
     st.write(
         "Warehouse image analysis and inventory product matching."
     )
+
+# =========================================================
+# YOLO AI PRODUCT DETECTION
+# =========================================================
+
+st.markdown("---")
+
+st.subheader("🤖 AI Product Detection - YOLO")
+
+if YOLO_AVAILABLE:
+
+    st.success("✅ YOLO AI Model Loaded")
+
+    yolo_image = st.camera_input(
+        "📷 Capture Image for AI Detection",
+        key="yolo_camera"
+    )
+
+    if yolo_image is not None:
+
+        image = Image.open(yolo_image).convert("RGB")
+
+        st.image(
+            image,
+            caption="Image for YOLO Detection",
+            use_container_width=True
+        )
+
+        with st.spinner("🤖 YOLO is detecting objects..."):
+
+            results = yolo_model.predict(
+                image,
+                conf=0.25
+            )
+
+        result = results[0]
+
+        if result.boxes is not None and len(result.boxes) > 0:
+
+            st.success(
+                f"✅ {len(result.boxes)} object(s) detected!"
+            )
+
+            st.write("### 🔎 Detection Results")
+
+            for box in result.boxes:
+
+                class_id = int(box.cls[0])
+                confidence = float(box.conf[0])
+                class_name = result.names[class_id]
+
+                st.write(
+                    f"**{class_name}** — "
+                    f"Confidence: {confidence * 100:.1f}%"
+                )
+
+            annotated_image = result.plot()
+
+            st.image(
+                annotated_image,
+                caption="🤖 YOLO Detection Result",
+                use_container_width=True
+            )
+
+        else:
+
+            st.warning(
+                "⚠️ No object detected."
+            )
+
+else:
+
+    st.error("❌ YOLO model could not be loaded.")
+
+    st.code(YOLO_ERROR)
 # =========================================================
 # BARCODE / QR CODE SCANNER - OPENCV
 # =========================================================
