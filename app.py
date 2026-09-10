@@ -4,6 +4,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 import streamlit as st
+from PIL import Image
 import pandas as pd
 import plotly.express as px
 import sys
@@ -560,6 +561,74 @@ elif menu == "🤖 Robot Vision":
 
         else:
             detected_product_name = None
+         # =========================================================
+# REAL-TIME CAMERA / LIVE ROBOT VISION
+# =========================================================
+
+st.markdown("---")
+
+st.subheader("📹 Live Robot Vision")
+
+st.info(
+    "Use your camera to capture a warehouse product image "
+    "for Robot Vision analysis."
+)
+
+camera_image = st.camera_input(
+    "📷 Capture Product using Camera"
+)
+
+if camera_image is not None:
+
+    st.success("✅ Camera image captured successfully!")
+
+    image = Image.open(camera_image)
+
+    st.image(
+        image,
+        caption="Captured Product Image",
+        use_container_width=True
+    )
+
+    # Save captured image temporarily
+    temp_camera_path = "robot_camera_temp.jpg"
+
+    image.convert("RGB").save(
+        temp_camera_path,
+        format="JPEG"
+    )
+
+    st.info("🔍 Processing captured image...")
+
+    try:
+
+        vision_system = RobotVisionSystem()
+
+        result = vision_system.process_image(
+            temp_camera_path
+        )
+
+        st.success(
+            "🤖 Robot Vision Processing Completed!"
+        )
+
+        st.write("### 🔎 Detection Result")
+
+        if result:
+
+            st.json(result)
+
+        else:
+
+            st.warning(
+                "⚠️ No product detected."
+            )
+
+    except Exception as e:
+
+        st.error(
+            f"❌ Vision processing error: {e}"
+        )
 
         # =================================================
         # SAVE TEMPORARY IMAGE
