@@ -510,7 +510,7 @@ elif menu == "🤖 Robot Vision":
         "Warehouse image analysis and inventory product matching."
     )
 # =========================================================
-# BARCODE / QR CODE SCANNER
+# BARCODE / QR CODE SCANNER - OPENCV
 # =========================================================
 
 st.markdown("---")
@@ -518,7 +518,7 @@ st.markdown("---")
 st.subheader("📦 Barcode / QR Code Scanner")
 
 st.info(
-    "Capture a barcode or QR code to identify the warehouse product."
+    "Capture a QR code or barcode using your camera."
 )
 
 barcode_image = st.camera_input(
@@ -528,109 +528,118 @@ barcode_image = st.camera_input(
 
 if barcode_image is not None:
 
-    image = Image.open(barcode_image)
+    image = Image.open(barcode_image).convert("RGB")
 
     st.image(
         image,
-        caption="Scanned Barcode / QR Image",
+        caption="Scanned Code Image",
         use_container_width=True
     )
 
     try:
 
-        decoded_codes = decode(image)
+        import cv2
+        import numpy as np
 
-        if decoded_codes:
+        image_array = np.array(image)
 
-            for code in decoded_codes:
+        # OpenCV QR detector
+        qr_detector = cv2.QRCodeDetector()
 
-                product_id = code.data.decode(
-                    "utf-8"
-                ).strip()
+        data, points, _ = qr_detector.detectAndDecode(
+            image_array
+        )
 
-                st.success(
-                    f"✅ Code Detected: {product_id}"
-                )
+        if data:
 
-                # Find product in inventory
-                if "Product_ID" in df.columns:
+            product_id = data.strip()
 
-                    product = df[
-                        df["Product_ID"].astype(str).str.upper()
-                        == product_id.upper()
-                    ]
+            st.success(
+                f"✅ QR Code Detected: {product_id}"
+            )
 
-                    if not product.empty:
+            # Search Product ID in inventory
+            if "Product_ID" in df.columns:
 
-                        product = product.iloc[0]
+                product = df[
+                    df["Product_ID"]
+                    .astype(str)
+                    .str.upper()
+                    == product_id.upper()
+                ]
 
-                        st.write("### 📦 Product Details")
+                if not product.empty:
 
-                        c1, c2, c3 = st.columns(3)
+                    product = product.iloc[0]
 
-                        with c1:
-                            st.metric(
-                                "Product ID",
-                                product["Product_ID"]
-                            )
+                    st.write("### 📦 Product Details")
 
-                        with c2:
-                            st.metric(
-                                "Product Name",
-                                product["Product_Name"]
-                            )
+                    c1, c2, c3 = st.columns(3)
 
-                        with c3:
-                            st.metric(
-                                "Quantity",
-                                product["Quantity"]
-                            )
-
-                        st.write(
-                            f"**Category:** {product['Category']}"
+                    with c1:
+                        st.metric(
+                            "Product ID",
+                            product["Product_ID"]
                         )
 
-                        st.write(
-                            f"**Price:** ₹{product['Price']}"
+                    with c2:
+                        st.metric(
+                            "Product Name",
+                            product["Product_Name"]
                         )
 
-                        st.write(
-                            f"**Warehouse Section:** "
-                            f"{product['Warehouse_Section']}"
-                        )
-
-                        quantity_value = float(
+                    with c3:
+                        st.metric(
+                            "Quantity",
                             product["Quantity"]
                         )
 
-                        reorder_value = float(
-                            product["Reorder_Level"]
+                    st.write(
+                        f"**Category:** "
+                        f"{product['Category']}"
+                    )
+
+                    st.write(
+                        f"**Price:** ₹{product['Price']}"
+                    )
+
+                    st.write(
+                        f"**Warehouse Section:** "
+                        f"{product['Warehouse_Section']}"
+                    )
+
+                    quantity_value = float(
+                        product["Quantity"]
+                    )
+
+                    reorder_value = float(
+                        product["Reorder_Level"]
+                    )
+
+                    if quantity_value <= reorder_value:
+
+                        st.error(
+                            "⚠️ LOW STOCK"
                         )
-
-                        if quantity_value <= reorder_value:
-
-                            st.error(
-                                "⚠️ LOW STOCK"
-                            )
-
-                        else:
-
-                            st.success(
-                                "✅ STOCK AVAILABLE"
-                            )
 
                     else:
 
-                        st.warning(
-                            f"⚠️ Product ID '{product_id}' "
-                            "was not found in inventory."
+                        st.success(
+                            "✅ STOCK AVAILABLE"
                         )
+
+                else:
+
+                    st.warning(
+                        f"⚠️ Product ID '{product_id}' "
+                        "was not found in inventory."
+                    )
 
         else:
 
             st.warning(
-                "⚠️ No barcode or QR code detected. "
-                "Please capture a clear image."
+                "⚠️ QR code not detected. "
+                "Keep the QR code clear and centered."
             )
 
     except Exception as e:
