@@ -5,6 +5,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 import streamlit as st
 from PIL import Image
+from pyzbar.pyzbar import decode
 import pandas as pd
 import plotly.express as px
 import sys
@@ -509,7 +510,135 @@ elif menu == "🤖 Robot Vision":
     st.write(
         "Warehouse image analysis and inventory product matching."
     )
+# =========================================================
+# BARCODE / QR CODE SCANNER
+# =========================================================
 
+st.markdown("---")
+
+st.subheader("📦 Barcode / QR Code Scanner")
+
+st.info(
+    "Capture a barcode or QR code to identify the warehouse product."
+)
+
+barcode_image = st.camera_input(
+    "📷 Scan Barcode / QR Code",
+    key="barcode_scanner"
+)
+
+if barcode_image is not None:
+
+    image = Image.open(barcode_image)
+
+    st.image(
+        image,
+        caption="Scanned Barcode / QR Image",
+        use_container_width=True
+    )
+
+    try:
+
+        decoded_codes = decode(image)
+
+        if decoded_codes:
+
+            for code in decoded_codes:
+
+                product_id = code.data.decode(
+                    "utf-8"
+                ).strip()
+
+                st.success(
+                    f"✅ Code Detected: {product_id}"
+                )
+
+                # Find product in inventory
+                if "Product_ID" in df.columns:
+
+                    product = df[
+                        df["Product_ID"].astype(str).str.upper()
+                        == product_id.upper()
+                    ]
+
+                    if not product.empty:
+
+                        product = product.iloc[0]
+
+                        st.write("### 📦 Product Details")
+
+                        c1, c2, c3 = st.columns(3)
+
+                        with c1:
+                            st.metric(
+                                "Product ID",
+                                product["Product_ID"]
+                            )
+
+                        with c2:
+                            st.metric(
+                                "Product Name",
+                                product["Product_Name"]
+                            )
+
+                        with c3:
+                            st.metric(
+                                "Quantity",
+                                product["Quantity"]
+                            )
+
+                        st.write(
+                            f"**Category:** {product['Category']}"
+                        )
+
+                        st.write(
+                            f"**Price:** ₹{product['Price']}"
+                        )
+
+                        st.write(
+                            f"**Warehouse Section:** "
+                            f"{product['Warehouse_Section']}"
+                        )
+
+                        quantity_value = float(
+                            product["Quantity"]
+                        )
+
+                        reorder_value = float(
+                            product["Reorder_Level"]
+                        )
+
+                        if quantity_value <= reorder_value:
+
+                            st.error(
+                                "⚠️ LOW STOCK"
+                            )
+
+                        else:
+
+                            st.success(
+                                "✅ STOCK AVAILABLE"
+                            )
+
+                    else:
+
+                        st.warning(
+                            f"⚠️ Product ID '{product_id}' "
+                            "was not found in inventory."
+                        )
+
+        else:
+
+            st.warning(
+                "⚠️ No barcode or QR code detected. "
+                "Please capture a clear image."
+            )
+
+    except Exception as e:
+
+        st.error(
+            f"❌ Scanner error: {e}"
+        )
     # =====================================================
     # SYSTEM STATUS
     # =====================================================
